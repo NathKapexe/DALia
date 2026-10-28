@@ -1,0 +1,47 @@
+# 🍅 Dalia: Asistente Inteligente de Diagnóstico Agrícola (Tomate)
+
+Dalia es una herramienta de diagnóstico para plantas de tomate basada en **Clean Architecture**, que combina la visión artificial (redes neuronales profundas con PyTorch) y un sistema experto basado en lógica de primer orden (Prolog) para identificar enfermedades y ofrecer planes de tratamiento precisos.
+
+---
+
+## 🛠️ Arquitectura del Sistema
+El proyecto se divide en tres componentes principales:
+1. **Frontend (`/app`)**: Aplicación móvil/de escritorio desarrollada en **Flutter (Dart)**.
+2. **Backend / API (`/api`)**: Servidor en **Python (FastAPI + PyTorch)** que procesa las imágenes mediante *transfer learning* (MobileNetV2).
+3. **Sistema Experto (`/prolog`)**: Base de conocimiento y reglas lógicas en **SWI-Prolog** para la toma de decisiones basada en síntomas y contexto.
+
+---
+
+## 📖 Manual de Arranque y Apagado (Para Presentación y Desarrollo)
+
+Sigue estos pasos en orden para levantar el sistema completo en tu computadora local.
+
+### Paso 1: Encender la API (Backend en Python)
+La API debe estar encendida antes de abrir la aplicación para que pueda procesar las imágenes y diagnósticos.
+
+1. Abre tu proyecto en **VS Code** y abre una nueva terminal (**Terminal -> New Terminal**).
+2. Cambia el tipo de terminal a **Command Prompt** (desde el menú desplegable de la terminal).
+3. Entra a la carpeta de la API y activa el entorno virtual:
+   ```cmd
+   cd api
+   \.venv\Scripts\activate.bat
+(Sabrás que funcionó cuando aparezca (.venv) al inicio de la línea).
+4. Inicia el servidor local:
+```uvicorn app.main:app --host 127.0.0.1 --port 8000
+(Deja esta terminal abierta y corriendo en todo momento).
+
+### Paso 2: Lanzar la Aplicación (Frontend en Flutter)
+1. Abre una segunda terminal en VS Code (haciendo clic en el botón + del panel de terminales).
+
+2. Entra a la carpeta de la aplicación:
+``` cd app
+3. Ejecuta la aplicación para escritorio (Windows) conectada a tu API local:
+flutter run -d windows --dart-define=DALIA_API_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+4. Espera a que compile y se abrirá automáticamente la ventana de la interfaz gráfica de Dalia.
+
+### Paso 3: Apagado Ordenado
+Para evitar procesos colgados al terminar de usar el sistema:
+
+1. Cierra la aplicación: Cierra la ventana de Dalia o presiona la tecla q en la terminal de Flutter.
+2. Apaga la API: Ve a la terminal donde corre Uvicorn y presiona Ctrl + C.
+3. Ahora puedes cerrar las terminales y VS Code de forma segura.
