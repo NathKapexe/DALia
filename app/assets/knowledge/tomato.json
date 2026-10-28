@@ -1,0 +1,340 @@
+{
+  "plantId": "tomato",
+  "plantName": "Tomate (en maceta)",
+  "version": "0.1-borrador",
+  "reviewNote": "Contenido BORRADOR escrito sin fuentes verificadas. Revísalo con fuentes agronómicas confiables (universidad, extensión agrícola, hojas técnicas) y completa el campo 'sources' de cada causa antes de usarlo con usuarios.",
+  "causes": [
+    {
+      "id": "late_blight",
+      "name": "Tizón tardío",
+      "category": "disease",
+      "summary": "Hongo parecido a un moho que causa manchas grandes, oscuras y de aspecto aceitoso en hojas, tallos y frutos. Avanza rápido con humedad y temperaturas frescas.",
+      "treatmentSteps": [
+        "Retira y desecha en una bolsa (no en la composta) las hojas o plantas muy afectadas.",
+        "Riega en la base y por la mañana; evita mojar las hojas.",
+        "Mejora la ventilación y deja espacio entre plantas.",
+        "Si decides usar un fungicida, elige uno autorizado para tomate en tu país y sigue la etiqueta.",
+        "Revisa la planta cada 2 o 3 días: puede empeorar muy rápido."
+      ],
+      "precautions": [
+        "Puede contagiar a otros tomates y a papas cercanas."
+      ],
+      "modelLabels": [
+        "Tomato___Late_blight"
+      ],
+      "indicators": {
+        "symptom:spots": 0.5,
+        "symptom:moldOrPowder": 0.3,
+        "symptom:wilting": 0.2
+      },
+      "sources": []
+    },
+    {
+      "id": "early_blight",
+      "name": "Tizón temprano",
+      "category": "disease",
+      "summary": "Hongo que forma manchas café con anillos concéntricos, normalmente en las hojas de abajo primero, rodeadas de un halo amarillo.",
+      "treatmentSteps": [
+        "Quita las hojas de abajo afectadas y tira los restos lejos de la planta.",
+        "Cubre la tierra con paja o mantillo para evitar salpicaduras.",
+        "Riega en la base y evita mojar las hojas.",
+        "Si decides usar un fungicida, elige uno autorizado para tomate en tu país y sigue la etiqueta."
+      ],
+      "precautions": [
+        "Si el cultivo se repite en el mismo suelo, el hongo puede volver: rota cultivos cuando sea posible."
+      ],
+      "modelLabels": [
+        "Tomato___Early_blight"
+      ],
+      "indicators": {
+        "symptom:spots": 0.6,
+        "symptom:yellowLeaves": 0.4
+      },
+      "sources": []
+    },
+    {
+      "id": "septoria_leaf_spot",
+      "name": "Mancha foliar por Septoria",
+      "category": "disease",
+      "summary": "Hongo que produce muchas manchas pequeñas y redondas con borde oscuro y centro claro, empezando por las hojas de abajo.",
+      "treatmentSteps": [
+        "Retira las hojas de abajo afectadas.",
+        "Evita mojar las hojas al regar y no trabajes con la planta cuando esté mojada.",
+        "Cubre la tierra con mantillo para reducir salpicaduras.",
+        "Si decides usar un fungicida, elige uno autorizado para tomate en tu país y sigue la etiqueta."
+      ],
+      "precautions": [
+        "Los restos de hojas infectadas pueden guardar el hongo: no los dejes en la maceta."
+      ],
+      "modelLabels": [
+        "Tomato___Septoria_leaf_spot"
+      ],
+      "indicators": {
+        "symptom:spots": 0.7,
+        "symptom:yellowLeaves": 0.3
+      },
+      "sources": []
+    },
+    {
+      "id": "target_spot",
+      "name": "Mancha anillada (Target spot)",
+      "category": "disease",
+      "summary": "Hongo que causa manchas café con anillos, parecidas al tizón temprano, en hojas y a veces en frutos.",
+      "treatmentSteps": [
+        "Retira las hojas afectadas y los restos caídos.",
+        "Mejora la ventilación y evita el exceso de humedad en las hojas.",
+        "Riega en la base.",
+        "Si decides usar un fungicida, elige uno autorizado para tomate en tu país y sigue la etiqueta."
+      ],
+      "precautions": [
+        "Se confunde fácilmente con el tizón temprano; si hay duda, consulta a un especialista."
+      ],
+      "modelLabels": [
+        "Tomato___Target_Spot"
+      ],
+      "indicators": {
+        "symptom:spots": 0.7,
+        "symptom:yellowLeaves": 0.3
+      },
+      "sources": []
+    },
+    {
+      "id": "bacterial_spot",
+      "name": "Mancha bacteriana",
+      "category": "disease",
+      "summary": "Bacteria que causa manchas pequeñas, oscuras y algo húmedas en hojas y frutos, a menudo con un halo amarillo. Se propaga con el agua que salpica.",
+      "treatmentSteps": [
+        "Quita las hojas más afectadas.",
+        "Riega en la base; evita regadera de lluvia sobre las hojas.",
+        "No toques las plantas cuando estén mojadas y desinfecta las herramientas.",
+        "Evita guardar semillas de plantas enfermas."
+      ],
+      "precautions": [
+        "Los productos a base de cobre pueden ayudar solo de forma limitada; úsalos según la etiqueta."
+      ],
+      "modelLabels": [
+        "Tomato___Bacterial_spot"
+      ],
+      "indicators": {
+        "symptom:spots": 0.7,
+        "symptom:yellowLeaves": 0.3
+      },
+      "sources": []
+    },
+    {
+      "id": "leaf_mold",
+      "name": "Moho de la hoja",
+      "category": "disease",
+      "summary": "Hongo que causa manchas amarillas arriba de la hoja y un moho gris verdoso por debajo. Aparece con mucha humedad y poca ventilación.",
+      "treatmentSteps": [
+        "Mejora la ventilación y baja la humedad alrededor de la planta.",
+        "Quita las hojas afectadas.",
+        "Riega en la base, por la mañana.",
+        "Si decides usar un fungicida, elige uno autorizado para tomate en tu país y sigue la etiqueta."
+      ],
+      "precautions": [
+        "Es más común en invernaderos y zonas cerradas."
+      ],
+      "modelLabels": [
+        "Tomato___Leaf_Mold"
+      ],
+      "indicators": {
+        "symptom:moldOrPowder": 0.6,
+        "symptom:yellowLeaves": 0.4
+      },
+      "sources": []
+    },
+    {
+      "id": "tomato_mosaic_virus",
+      "name": "Virus del mosaico del tomate",
+      "category": "disease",
+      "summary": "Virus que deja las hojas con zonas claras y oscuras (mosaico) y a veces deformes. No tiene cura.",
+      "treatmentSteps": [
+        "Retira y desecha la planta afectada para proteger a las demás.",
+        "Lávate las manos y desinfecta las herramientas después de tocarla.",
+        "Usa semillas y plantines de fuentes confiables."
+      ],
+      "precautions": [
+        "El virus se transmite por contacto: evita tocar plantas sanas después de tocar las enfermas."
+      ],
+      "modelLabels": [
+        "Tomato___Tomato_mosaic_virus"
+      ],
+      "indicators": {
+        "symptom:curledOrDeformed": 0.6,
+        "symptom:yellowLeaves": 0.4
+      },
+      "sources": []
+    },
+    {
+      "id": "yellow_leaf_curl_virus",
+      "name": "Virus del rizado amarillo",
+      "category": "disease",
+      "summary": "Virus transmitido por mosca blanca: las hojas se enrollan hacia arriba, se ponen amarillas y la planta crece poco. No tiene cura.",
+      "treatmentSteps": [
+        "Retira la planta afectada si el daño es grande.",
+        "Controla la mosca blanca (trampas amarillas pegajosas, malla fina, revisar el envés de las hojas).",
+        "Evita plantar cerca de plantas ya infectadas."
+      ],
+      "precautions": [
+        "Una planta infectada joven rara vez se recupera."
+      ],
+      "modelLabels": [
+        "Tomato___Tomato_Yellow_Leaf_Curl_Virus"
+      ],
+      "indicators": {
+        "symptom:curledOrDeformed": 0.5,
+        "symptom:yellowLeaves": 0.3,
+        "symptom:visibleInsects": 0.2
+      },
+      "sources": []
+    },
+    {
+      "id": "spider_mites",
+      "name": "Arañita roja",
+      "category": "pest",
+      "summary": "Ácaros diminutos que chupan la savia: punteado amarillo en las hojas y, a veces, telarañas finas por debajo. Prefieren ambientes calientes y secos.",
+      "treatmentSteps": [
+        "Limpia las hojas con agua, sobre todo por el envés.",
+        "Aísla la planta si hay otras cerca.",
+        "Puedes probar jabón potásico o aceite de neem, siguiendo la etiqueta.",
+        "Revisa cada pocos días: se reproducen rápido."
+      ],
+      "precautions": [
+        "No apliques productos con el sol directo ni en horas de calor fuerte."
+      ],
+      "modelLabels": [
+        "Tomato___Spider_mites Two-spotted_spider_mite"
+      ],
+      "indicators": {
+        "symptom:visibleInsects": 0.5,
+        "symptom:yellowLeaves": 0.3,
+        "symptom:dryTips": 0.2
+      },
+      "sources": []
+    },
+    {
+      "id": "overwatering",
+      "name": "Exceso de riego",
+      "category": "watering",
+      "summary": "Cuando la tierra queda siempre encharcada, las raíces no respiran y la planta se ve amarilla o decaída aunque la tierra esté mojada.",
+      "treatmentSteps": [
+        "Deja que la tierra se seque en la superficie antes de volver a regar.",
+        "Comprueba que la maceta tenga agujeros de drenaje y no dejes agua en el plato.",
+        "Si las raíces se ven café y blandas, trasplanta a sustrato nuevo y recorta las partes podridas."
+      ],
+      "precautions": [
+        "Es una causa muy común en macetas y se confunde con enfermedades."
+      ],
+      "modelLabels": [],
+      "indicators": {
+        "soil:waterlogged": 0.5,
+        "symptom:yellowLeaves": 0.25,
+        "symptom:wilting": 0.25
+      },
+      "sources": []
+    },
+    {
+      "id": "underwatering",
+      "name": "Falta de riego",
+      "category": "watering",
+      "summary": "La planta se marchita y las puntas se secan porque no recibe suficiente agua. Suele recuperarse después de regar.",
+      "treatmentSteps": [
+        "Riega despacio hasta que salga agua por los agujeros de la maceta.",
+        "Crea una rutina de riego y revisa la tierra con el dedo.",
+        "Cubre la tierra con paja o mantillo para conservar la humedad."
+      ],
+      "precautions": [
+        "En días de mucho calor, una maceta pequeña puede secarse en pocas horas."
+      ],
+      "modelLabels": [],
+      "indicators": {
+        "soil:veryDry": 0.4,
+        "soil:dry": 0.2,
+        "symptom:wilting": 0.2,
+        "symptom:dryTips": 0.2
+      },
+      "sources": []
+    },
+    {
+      "id": "excess_sun",
+      "name": "Exceso de sol",
+      "category": "light",
+      "summary": "Demasiado sol directo o calor quema las hojas: manchas pálidas o secas y bordes quebradizos en las hojas más expuestas.",
+      "treatmentSteps": [
+        "Da sombra en las horas de más sol con una malla o moviendo la maceta.",
+        "Acostumbra la planta al sol de forma gradual.",
+        "Mantén un riego regular."
+      ],
+      "precautions": [
+        "Es un daño por calor o luz, no una infección: no se contagia."
+      ],
+      "modelLabels": [],
+      "indicators": {
+        "light:fullSun": 0.5,
+        "symptom:dryTips": 0.3,
+        "symptom:yellowLeaves": 0.2
+      },
+      "sources": []
+    },
+    {
+      "id": "low_light",
+      "name": "Falta de luz",
+      "category": "light",
+      "summary": "Con poca luz la planta se estira, las hojas se ven pálidas y florece poco.",
+      "treatmentSteps": [
+        "Mueve la planta a un lugar con al menos 6 horas de sol directo al día.",
+        "Gira la maceta de vez en cuando para que reciba luz por todos lados."
+      ],
+      "precautions": [
+        "Si no puedes darle más sol, considera una luz de cultivo."
+      ],
+      "modelLabels": [],
+      "indicators": {
+        "light:low": 0.7,
+        "symptom:yellowLeaves": 0.3
+      },
+      "sources": []
+    },
+    {
+      "id": "nutrient_deficiency",
+      "name": "Falta de nutrientes",
+      "category": "nutrition",
+      "summary": "Hojas amarillas (sobre todo las más viejas), bordes secos o crecimiento lento pueden indicar que a la tierra le faltan nutrientes.",
+      "treatmentSteps": [
+        "Abona con un fertilizante equilibrado para tomate, siguiendo la etiqueta.",
+        "Renueva parte del sustrato si lleva mucho tiempo en la maceta.",
+        "No te pases con el abono: demasiado también daña la planta."
+      ],
+      "precautions": [
+        "Puede parecerse al exceso de riego; revisa primero el estado de la tierra."
+      ],
+      "modelLabels": [],
+      "indicators": {
+        "symptom:yellowLeaves": 0.6,
+        "symptom:dryTips": 0.3,
+        "symptom:curledOrDeformed": 0.1
+      },
+      "sources": []
+    },
+    {
+      "id": "no_clear_symptoms",
+      "name": "Sin síntomas claros",
+      "category": "none",
+      "summary": "En la foto no se detectan síntomas claros. Eso no garantiza que la planta esté sana.",
+      "treatmentSteps": [
+        "Sigue con el cuidado habitual.",
+        "Toma otra foto de cerca de una hoja y revisa también el envés.",
+        "Observa la planta unos días y vuelve a consultar si aparece algún cambio."
+      ],
+      "precautions": [
+        "Una foto no sustituye la revisión directa de la planta."
+      ],
+      "modelLabels": [
+        "Tomato___healthy"
+      ],
+      "indicators": {},
+      "sources": []
+    }
+  ]
+}
