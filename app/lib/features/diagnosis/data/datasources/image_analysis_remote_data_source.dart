@@ -13,11 +13,6 @@ abstract class ImageAnalysisRemoteDataSource {
   Future<List<FindingModel>> analyze(PlantPhoto photo);
 }
 
-/// Talks to the Dalia inference API (`POST /analyze`, multipart field `photo`).
-///
-/// Error mapping:
-///  * no connection, timeout, 5xx, unexpected body -> [AnalyzerUnavailableException]
-///  * 400 / 413 / 415 / 422, unsupported or unreadable file -> [InvalidPhotoException]
 class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
   HttpImageAnalysisDataSource({
     required this.client,
@@ -29,8 +24,6 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
   final http.Client client;
   final String baseUrl;
   final Duration timeout;
-
-  /// Same limit the API enforces (10 MB).
   final int maxBytes;
 
   @override
@@ -41,7 +34,6 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
       throw const InvalidPhotoException('La foto es demasiado grande (máximo 10 MB).');
     }
 
-    // The API only accepts image/* content types, so it must be set explicitly.
     final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/analyze'))
       ..files.add(http.MultipartFile.fromBytes(
         'photo',
@@ -95,9 +87,9 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
             .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
             .toList();
       } on FormatException {
-        throw const AnalyzerUnavailableException('Respuesta inesperada del servidor.');
+        throw Exception('Respuesta inesperada del servidor (FormatException).');
       } on TypeError {
-        throw const AnalyzerUnavailableException('Respuesta inesperada del servidor.');
+        throw Exception('Respuesta inesperada del servidor (TypeError).');
       }
     }
 
@@ -105,11 +97,9 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
       throw InvalidPhotoException(_detail(response) ?? 'La foto no es válida.');
     }
 
-    throw AnalyzerUnavailableException('El servidor respondió con el código $status.');
+    throw Exception('El servidor respondió con el código $status.');
   }
 
-  /// FastAPI sends `detail` as a string for our own errors and as a list for
-  /// validation errors (422); only the string form is shown to the user.
   String? _detail(http.Response response) {
     try {
       final body = jsonDecode(utf8.decode(response.bodyBytes));
@@ -117,7 +107,7 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
         return body['detail'] as String;
       }
     } on FormatException {
-      // Not JSON: fall back to the generic message.
+      // Ignorar si no es JSON
     }
     return null;
   }
