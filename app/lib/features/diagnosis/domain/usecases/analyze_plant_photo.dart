@@ -32,13 +32,12 @@ class AnalyzePlantPhoto {
     var findings = const <VisualFinding>[];
     var imageAvailable = true;
     try {
-      // ¡Aquí conectamos los cables! Pasamos las respuestas hacia la API
-      // Nota: Ajusta 'sintomas', 'suelo' y 'luz' si en tu clase ContextAnswers se llaman diferente (ej. answers.symptoms).
+      // Extraemos el texto (.name) de los enums en inglés y los pasamos a la API
       findings = await imageAnalyzer.analyze(
         photo,
-        sintomas: answers.sintomas, 
-        suelo: answers.suelo,
-        luz: answers.luz,
+        sintomas: answers.symptoms.map((s) => s.name).toList(),
+        suelo: answers.soil?.name,
+        luz: answers.light?.name,
       );
     } on AnalyzerUnavailableException {
       imageAvailable = false;
