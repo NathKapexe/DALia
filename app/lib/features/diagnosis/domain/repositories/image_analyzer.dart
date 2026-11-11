@@ -9,7 +9,12 @@ abstract class ImageAnalyzer {
   ///
   /// Throws [InvalidPhotoException] when the photo itself is unusable
   /// (unsupported format, too large, unreadable): the user must pick another.
-  Future<List<VisualFinding>> analyze(PlantPhoto photo);
+  Future<List<VisualFinding>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  });
 }
 
 class AnalyzerUnavailableException implements Exception {

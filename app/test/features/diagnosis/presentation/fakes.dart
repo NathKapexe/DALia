@@ -30,8 +30,13 @@ class FakeAnalyzer implements ImageAnalyzer {
   Object? error;
   int calls = 0;
 
-  @override
-  Future<List<VisualFinding>> analyze(PlantPhoto photo) async {
+ @override
+Future<List<VisualFinding>> analyze(
+  PlantPhoto photo, {
+  List<String>? sintomas,
+  String? suelo,
+  String? luz,
+}) async {
     calls++;
     final failure = error;
     if (failure != null) throw failure;

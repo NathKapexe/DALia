@@ -16,12 +16,23 @@ class _FixedAnalyzer implements ImageAnalyzer {
   final List<VisualFinding> findings;
 
   @override
-  Future<List<VisualFinding>> analyze(PlantPhoto photo) async => findings;
+  Future<List<VisualFinding>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  }) async =>
+      findings;
 }
 
 class _OfflineAnalyzer implements ImageAnalyzer {
   @override
-  Future<List<VisualFinding>> analyze(PlantPhoto photo) async =>
+  Future<List<VisualFinding>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  }) async =>
       throw const AnalyzerUnavailableException();
 }
 

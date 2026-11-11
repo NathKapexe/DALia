@@ -15,7 +15,13 @@ class _GateAnalyzer implements ImageAnalyzer {
   final completer = Completer<List<VisualFinding>>();
 
   @override
-  Future<List<VisualFinding>> analyze(PlantPhoto photo) => completer.future;
+  Future<List<VisualFinding>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  }) =>
+      completer.future;
 }
 
 void main() {
