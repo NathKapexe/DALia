@@ -10,7 +10,13 @@ import '../../domain/repositories/image_analyzer.dart';
 import '../models/finding_model.dart';
 
 abstract class ImageAnalysisRemoteDataSource {
-  Future<List<FindingModel>> analyze(PlantPhoto photo);
+  // 1. Actualizamos la interfaz para recibir los datos del contexto
+  Future<List<FindingModel>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  });
 }
 
 class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
@@ -27,7 +33,12 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
   final int maxBytes;
 
   @override
-  Future<List<FindingModel>> analyze(PlantPhoto photo) async {
+  Future<List<FindingModel>> analyze(
+    PlantPhoto photo, {
+    List<String>? sintomas,
+    String? suelo,
+    String? luz,
+  }) async {
     final mediaType = _mediaTypeFor(photo.path);
     final bytes = await _readBytes(photo.path);
     if (bytes.length > maxBytes) {
@@ -42,10 +53,22 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
         contentType: mediaType,
       ));
 
+    // 2. Inyectamos las respuestas del cuestionario al formulario HTTP
+    if (sintomas != null && sintomas.isNotEmpty) {
+      request.fields['sintomas'] = sintomas.join(','); // FastAPI lo separa por comas
+    }
+    if (suelo != null && suelo.isNotEmpty) {
+      request.fields['suelo'] = suelo;
+    }
+    if (luz != null && luz.isNotEmpty) {
+      request.fields['luz'] = luz;
+    }
+
     final response = await _send(request);
     return _parse(response);
   }
 
+  // ... (Conserva aquí abajo _mediaTypeFor, _readBytes, _send, _parse, etc.)
   MediaType _mediaTypeFor(String path) {
     final lower = path.toLowerCase();
     if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
