@@ -32,7 +32,14 @@ class AnalyzePlantPhoto {
     var findings = const <VisualFinding>[];
     var imageAvailable = true;
     try {
-      findings = await imageAnalyzer.analyze(photo);
+      // ¡Aquí conectamos los cables! Pasamos las respuestas hacia la API
+      // Nota: Ajusta 'sintomas', 'suelo' y 'luz' si en tu clase ContextAnswers se llaman diferente (ej. answers.symptoms).
+      findings = await imageAnalyzer.analyze(
+        photo,
+        sintomas: answers.sintomas, 
+        suelo: answers.suelo,
+        luz: answers.luz,
+      );
     } on AnalyzerUnavailableException {
       imageAvailable = false;
     }
