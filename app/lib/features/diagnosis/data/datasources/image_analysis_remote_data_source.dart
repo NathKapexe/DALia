@@ -68,7 +68,6 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
     return _parse(response);
   }
 
-  // ... (Conserva aquí abajo _mediaTypeFor, _readBytes, _send, _parse, etc.)
   MediaType _mediaTypeFor(String path) {
     final lower = path.toLowerCase();
     if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
@@ -106,9 +105,41 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
     if (status == 200) {
       try {
         final body = jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-        return (body['findings'] as List<dynamic>)
-            .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
-            .toList();
+        
+        List<FindingModel> resultadosExpertos = [];
+
+        // 1. Extraemos la magia de Prolog (expert_diagnosis)
+        if (body.containsKey('expert_diagnosis') && body['expert_diagnosis'] != null) {
+          final expertData = body['expert_diagnosis'];
+          
+          if (expertData is Map) {
+            // Si el backend manda un diccionario: {"Arañita roja": 0.9, "Tizón": 0.2}
+            expertData.forEach((key, value) {
+              resultadosExpertos.add(FindingModel.fromJson({
+                'label': key.toString(),
+                'confidence': (value as num).toDouble()
+              }));
+            });
+          } else if (expertData is List) {
+            // Si el backend manda una lista: [{"label": "Arañita", "confidence": 0.9}]
+            resultadosExpertos = (expertData as List<dynamic>)
+                .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
+                .toList();
+          }
+        }
+
+        // 2. Si Prolog falla o viene vacío, usamos solo la visión (PyTorch) como respaldo
+        if (resultadosExpertos.isEmpty && body.containsKey('findings')) {
+          resultadosExpertos = (body['findings'] as List<dynamic>)
+              .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+        }
+
+        // 3. ¡El toque maestro! Ordenamos los resultados de mayor a menor probabilidad
+        resultadosExpertos.sort((a, b) => b.confidence.compareTo(a.confidence));
+
+        return resultadosExpertos;
+
       } on FormatException {
         throw Exception('Respuesta inesperada del servidor (FormatException).');
       } on TypeError {
@@ -122,7 +153,6 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
 
     throw Exception('El servidor respondió con el código $status.');
   }
-
   String? _detail(http.Response response) {
     try {
       final body = jsonDecode(utf8.decode(response.bodyBytes));
