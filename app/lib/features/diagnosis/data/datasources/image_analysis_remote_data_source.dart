@@ -117,12 +117,12 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
             expertData.forEach((key, value) {
               resultadosExpertos.add(FindingModel.fromJson({
                 'label': key.toString(),
-                'confidence': (value as num).toDouble()
+                'confidence': (value is num) ? value.toDouble() : 0.0
               }));
             });
           } else if (expertData is List) {
-            // Si el backend manda una lista: [{"label": "Arañita", "confidence": 0.9}]
-            resultadosExpertos = (expertData as List<dynamic>)
+            // Si manda una lista, la procesamos directamente sin cast innecesario
+            resultadosExpertos = expertData
                 .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
                 .toList();
           }
@@ -153,6 +153,7 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
 
     throw Exception('El servidor respondió con el código $status.');
   }
+
   String? _detail(http.Response response) {
     try {
       final body = jsonDecode(utf8.decode(response.bodyBytes));
