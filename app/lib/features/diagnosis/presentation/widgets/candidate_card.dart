@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/diagnosis.dart';
 import '../labels.dart';
+import '../pages/cause_detail_page.dart';
 
-/// One probable cause: name, category, relevance bar and, when expanded,
-/// explanation, treatment steps, precautions and the evidence behind it.
 class CandidateCard extends StatelessWidget {
   const CandidateCard({
     super.key,
@@ -18,56 +17,86 @@ class CandidateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final cause = candidate.cause;
+    final score = candidate.score.clamp(0.0, 1.0).toDouble();
+    final percentage = (score * 100).round();
 
     return Card(
+      elevation: initiallyExpanded ? 2 : 0.5,
       margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: initiallyExpanded ? colors.primary.withValues(alpha: 0.5) : colors.outlineVariant,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         initiallyExpanded: initiallyExpanded,
-        title: Text(cause.name, style: theme.textTheme.titleMedium),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                cause.name,
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              '$percentage%',
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: colors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(categoryLabel(cause.category)),
-              const SizedBox(height: 6),
-              LinearProgressIndicator(value: candidate.score.clamp(0.0, 1.0).toDouble()),
+              Text(
+                categoryLabel(cause.category),
+                style: theme.textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: score,
+                  minHeight: 6,
+                ),
+              ),
             ],
           ),
         ),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        childrenPadding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+        expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(cause.summary),
-          const SizedBox(height: 12),
-          Text('Qué hacer', style: theme.textTheme.titleSmall),
+          const Divider(),
           const SizedBox(height: 4),
-          for (var i = 0; i < cause.treatmentSteps.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text('${i + 1}. ${cause.treatmentSteps[i]}'),
+          Text(
+            cause.summary,
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.35),
+          ),
+          const SizedBox(height: 14),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.tonalIcon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => CauseDetailPage(candidate: candidate),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.read_more_rounded, size: 18),
+              label: const Text('Más: causas y cuidados'),
             ),
-          if (cause.precautions.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text('Ten en cuenta', style: theme.textTheme.titleSmall),
-            const SizedBox(height: 4),
-            for (final precaution in cause.precautions)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text('• $precaution'),
-              ),
-          ],
-          if (candidate.evidence.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text('Por qué aparece aquí', style: theme.textTheme.titleSmall),
-            const SizedBox(height: 4),
-            for (final evidence in candidate.evidence)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text('• ${evidenceLabel(evidence)}'),
-              ),
-          ],
+          ),
         ],
       ),
     );

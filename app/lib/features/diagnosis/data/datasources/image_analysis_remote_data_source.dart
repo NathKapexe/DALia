@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -10,7 +11,6 @@ import '../../domain/repositories/image_analyzer.dart';
 import '../models/finding_model.dart';
 
 abstract class ImageAnalysisRemoteDataSource {
-  // 1. Actualizamos la interfaz para recibir los datos del contexto
   Future<List<FindingModel>> analyze(
     PlantPhoto photo, {
     List<String>? sintomas,
@@ -53,9 +53,8 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
         contentType: mediaType,
       ));
 
-    // 2. Inyectamos las respuestas del cuestionario al formulario HTTP
     if (sintomas != null && sintomas.isNotEmpty) {
-      request.fields['sintomas'] = sintomas.join(','); // FastAPI lo separa por comas
+      request.fields['sintomas'] = sintomas.join(',');
     }
     if (suelo != null && suelo.isNotEmpty) {
       request.fields['suelo'] = suelo;
@@ -69,6 +68,9 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
   }
 
   MediaType _mediaTypeFor(String path) {
+    if (kIsWeb) {
+      return MediaType('image', 'jpeg');
+    }
     final lower = path.toLowerCase();
     if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
       return MediaType('image', 'jpeg');
@@ -79,6 +81,17 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
   }
 
   Future<List<int>> _readBytes(String path) async {
+    if (kIsWeb) {
+      try {
+        final response = await client.get(Uri.parse(path));
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        }
+        throw const InvalidPhotoException('No se pudo leer la foto desde el navegador.');
+      } catch (_) {
+        throw const InvalidPhotoException('No se pudo leer la foto desde el navegador.');
+      }
+    }
     try {
       return await File(path).readAsBytes();
     } on FileSystemException {
@@ -108,12 +121,10 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
         
         List<FindingModel> resultadosExpertos = [];
 
-        // 1. Extraemos la magia de Prolog (expert_diagnosis)
         if (body.containsKey('expert_diagnosis') && body['expert_diagnosis'] != null) {
           final expertData = body['expert_diagnosis'];
           
           if (expertData is Map) {
-            // Si el backend manda un diccionario: {"Arañita roja": 0.9, "Tizón": 0.2}
             expertData.forEach((key, value) {
               resultadosExpertos.add(FindingModel.fromJson({
                 'label': key.toString(),
@@ -121,21 +132,18 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
               }));
             });
           } else if (expertData is List) {
-            // Si manda una lista, la procesamos directamente sin cast innecesario
             resultadosExpertos = expertData
                 .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
                 .toList();
           }
         }
 
-        // 2. Si Prolog falla o viene vacío, usamos solo la visión (PyTorch) como respaldo
         if (resultadosExpertos.isEmpty && body.containsKey('findings')) {
           resultadosExpertos = (body['findings'] as List<dynamic>)
               .map((item) => FindingModel.fromJson(item as Map<String, dynamic>))
               .toList();
         }
 
-        // 3. ¡El toque maestro! Ordenamos los resultados de mayor a menor probabilidad
         resultadosExpertos.sort((a, b) => b.confidence.compareTo(a.confidence));
 
         return resultadosExpertos;
@@ -166,5 +174,8 @@ class HttpImageAnalysisDataSource implements ImageAnalysisRemoteDataSource {
     return null;
   }
 
-  String _fileName(String path) => path.split(RegExp(r'[\\/]')).last;
+  String _fileName(String path) {
+    if (kIsWeb) return 'plant_photo.jpg';
+    return path.split(RegExp(r'[\\/]')).last;
+  }
 }

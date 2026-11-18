@@ -53,7 +53,7 @@ class ResultPage extends StatelessWidget {
                 if (diagnosis.candidates.isEmpty)
                   const Text(emptyResultMessage)
                 else
-                  for (var i = 0; i < diagnosis.candidates.length; i++)
+                  for (var i = 0; i < diagnosis.candidates.take(3).length; i++)
                     CandidateCard(
                       candidate: diagnosis.candidates[i],
                       initiallyExpanded: i == 0,

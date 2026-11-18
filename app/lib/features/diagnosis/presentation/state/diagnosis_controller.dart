@@ -2,26 +2,29 @@ import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/context_answers.dart';
 import '../../domain/entities/diagnosis.dart';
+import '../../domain/entities/diagnosis_record.dart';
 import '../../domain/entities/plant_photo.dart';
+import '../../domain/repositories/history_repository.dart';
 import '../../domain/repositories/image_analyzer.dart';
 import '../../domain/repositories/photo_source.dart';
 import '../../domain/usecases/analyze_plant_photo.dart';
 
 enum DiagnosisStatus { idle, analyzing, done, failure }
 
-/// Holds the state of one consultation: photo, context answers and result.
-///
-/// It talks only to the domain (use case and ports), never to the data layer.
 class DiagnosisController extends ChangeNotifier {
   DiagnosisController({
     required AnalyzePlantPhoto analyzePlantPhoto,
     required PhotoSource photoSource,
+    HistoryRepository? historyRepository,
     this.plantId = 'tomato',
   })  : _analyze = analyzePlantPhoto,
-        _photoSource = photoSource;
+        // ignore: prefer_initializing_formals
+        _photoSource = photoSource,
+        _history = historyRepository; 
 
   final AnalyzePlantPhoto _analyze;
   final PhotoSource _photoSource;
+  final HistoryRepository? _history;
   final String plantId;
 
   DiagnosisStatus _status = DiagnosisStatus.idle;
@@ -29,9 +32,8 @@ class DiagnosisController extends ChangeNotifier {
   ContextAnswers _answers = const ContextAnswers();
   Diagnosis? _diagnosis;
   String? _errorMessage;
+  List<DiagnosisRecord> _historyRecords = const [];
 
-  // Incremented on every new request or reset, so that an analysis that
-  // finishes late (after the user left) is discarded.
   int _requestId = 0;
 
   DiagnosisStatus get status => _status;
@@ -41,8 +43,37 @@ class DiagnosisController extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isAnalyzing => _status == DiagnosisStatus.analyzing;
   bool get cameraAvailable => _photoSource.cameraAvailable;
+  List<DiagnosisRecord> get historyRecords => _historyRecords;
 
-  /// Returns true when a NEW photo was selected (false if cancelled or failed).
+  Future<void> loadHistory() async {
+    if (_history == null) return;
+    _historyRecords = await _history.getAll();
+    notifyListeners();
+  }
+
+  Future<void> deleteHistoryRecord(String id) async {
+    if (_history == null) return;
+    await _history.delete(id);
+    await loadHistory();
+  }
+
+  Future<void> clearHistory() async {
+    if (_history == null) return;
+    await _history.clear();
+    _historyRecords = const [];
+    notifyListeners();
+  }
+
+  /// Carga un registro guardado para verlo en ResultPage
+  void openRecord(DiagnosisRecord record) {
+    _requestId++;
+    _photo = PlantPhoto(record.photoPath);
+    _diagnosis = record.diagnosis;
+    _errorMessage = null;
+    _status = DiagnosisStatus.done;
+    notifyListeners();
+  }
+
   Future<bool> choosePhoto(PhotoOrigin origin) async {
     try {
       final photo = await _photoSource.pick(origin);
@@ -110,6 +141,20 @@ class DiagnosisController extends ChangeNotifier {
       if (request != _requestId) return;
       _diagnosis = diagnosis;
       _status = DiagnosisStatus.done;
+
+      // Guardamos automáticamente en el historial local
+      if (_history != null && diagnosis.candidates.isNotEmpty) {
+        final now = DateTime.now();
+        await _history.save(
+          DiagnosisRecord(
+            id: now.millisecondsSinceEpoch.toString(),
+            createdAt: now,
+            photoPath: photo.path,
+            diagnosis: diagnosis,
+          ),
+        );
+        _historyRecords = await _history.getAll();
+      }
     } on InvalidPhotoException catch (e) {
       if (request != _requestId) return;
       _errorMessage = e.message;
@@ -128,7 +173,6 @@ class DiagnosisController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Starts a new consultation.
   void reset() {
     _requestId++;
     _photo = null;
